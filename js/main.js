@@ -1,7 +1,7 @@
 // Функция получения случайного целого числа из переданного диапазона включительно.
 // Источник: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 
-const getRandomInteger = function (min, max) {
+const getRandomInteger = (min, max) => {
   if (min < 0 || max < 0) {
     throw Error('Positive number is required');
   } else if (max < min) {
@@ -17,7 +17,7 @@ getRandomInteger();
 
 // Функция получения случайного числа с плавающей точкой из переданного диапазона включительно.
 
-const getRandomFloat = function (min, max, numbersAfterPoint) {
+const getRandomFloat = (min, max, numbersAfterPoint) => {
   if (min < 0 || max < 0) {
     throw Error('Positive number is required');
   } else if (max < min) {
