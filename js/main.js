@@ -105,17 +105,6 @@ function getRandomArray(arr, neededElements) {
   return result;
 }
 
-//Функция получения объекта со случайными значениями ключей.
-//Свойство для author
-//Функция для создания пути к аватарке автора объявления
-const getPathToImgOfAvatar = (numberOfImage) => {
-  if (numberOfImage < 10) {
-    return`img/avatars/user0${numberOfImage}.png`;
-  } else if (numberOfImage >= 10){
-    return `img/avatars/user${numberOfImage}.png`;
-  }
-};
-
 //Функция для получения необходимого количества значений исходного массива с записью в новый массив.
 //Вне зависимости от того, больше по количеству элементов должен быть новый массив или меньше.
 const getRandomPhotos = (arrayWithPhotos, amountOfPhotos) => {
@@ -132,14 +121,15 @@ const getRandomPhotos = (arrayWithPhotos, amountOfPhotos) => {
   return resultArray;
 };
 
-//Функция для декомпозиции кода, якобы должна упрощать дальнейшую поддержку кода.
+//Функция для декомпозиции кода. Позволяет получить случайный элемент переданного массива.
 const getRandomElementOfArray = (elements) => {
   const result = elements[getRandomInteger(0, elements.length - 1)];
   return result;
 };
 
 //Функция для сборки одного рекламного объявления. Будет создан один объект.
-const createAdvertisement = (toPathOfImage) => {
+const createAdvertisement = (idx) => {
+  const currentIndex = idx + 1;
   //Свойства для offer
   const randomPrice = getRandomInteger(500, 5000);
   const randomQuantityOfRooms = getRandomInteger(1, 20);
@@ -152,7 +142,7 @@ const createAdvertisement = (toPathOfImage) => {
 
   const advertismentObject = {
     author: {
-      avatar: getPathToImgOfAvatar(toPathOfImage),
+      avatar: `img/avatars/user${(currentIndex.toString()).padStart(2, '0')}.png`,
     },
     offer: {
       title: getRandomElementOfArray(TITLES_OF_PLACEMENT),
@@ -175,14 +165,7 @@ const createAdvertisement = (toPathOfImage) => {
   return advertismentObject;
 };
 
-//Функция для создания массива нескольких объектов
-const createManyAdvertisements = (amountOfObjects) => {
-  const resultObjectsArray = [];
-  for (let i = 1; i <= amountOfObjects; i++) {
-    const newObjectWithAdvertisement = createAdvertisement(i);
-    resultObjectsArray.push(newObjectWithAdvertisement);
-  }
-  return resultObjectsArray;
-};
-//Вызов функции, чтобы не ругался ESLint
-createManyAdvertisements(10);
+//Функция по созданию массива объектов аналогичных переданному объекту.
+const NUMBER_OF_ADVERTISEMENTS = 10;
+const createManyAdvertisements = () => Array.from({length: NUMBER_OF_ADVERTISEMENTS}).map((item, idx) => createAdvertisement(idx));
+createManyAdvertisements();
