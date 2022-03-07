@@ -88,22 +88,8 @@ const PHOTOS_OF_PLACEMENT = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-//Функция для получения массива случайных значений из исходного массива взята по ссылке:
-//https://stackoverflow.com/questions/19269545/how-to-get-a-number-of-random-elements-from-an-array
-function getRandomArray(arr, neededElements) {
-  const result = new Array(neededElements);
-  let lengthOfArray = arr.length;
-  const taken = new Array(lengthOfArray);
-  if (neededElements > lengthOfArray) {
-    throw new RangeError('getRandom: more elements taken than available');
-  }
-  while (neededElements--) {
-    const randomIntForArray = Math.floor(Math.random() * lengthOfArray);
-    result[neededElements] = arr[randomIntForArray in taken ? taken[randomIntForArray] : randomIntForArray];
-    taken[randomIntForArray] = --lengthOfArray in taken ? taken[lengthOfArray] : lengthOfArray;
-  }
-  return result;
-}
+//Функция по генерации массива случайной длинны из переданного массива. Минимальное количество элелементов в новом массиве: 1.
+const getRandomArraySlice = (array) => array.sort(() => 0.5 - Math.random()).slice(0, getRandomInteger(1, array.length));
 
 //Функция для получения необходимого количества значений исходного массива с записью в новый массив.
 //Вне зависимости от того, больше по количеству элементов должен быть новый массив или меньше.
@@ -134,7 +120,7 @@ const createAdvertisement = (idx) => {
   const randomPrice = getRandomInteger(500, 5000);
   const randomQuantityOfRooms = getRandomInteger(1, 20);
   const randomQuantityOfGuests = getRandomInteger(1, 10);
-  const getRandomFeatures = getRandomArray(FEATURES_OF_PLACEMENT, getRandomInteger(1, 6));
+  const getRandomFeatures = getRandomArraySlice(FEATURES_OF_PLACEMENT);
 
   //Свойства для location
   const randomLatitude = getRandomFloat(35.65, 35.7, 5);
