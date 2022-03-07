@@ -12,8 +12,6 @@ const getRandomInteger = (min, max) => {
 
   return Math.round(Math.random() * (max - min) + min);
 };
-//вызов функции, чтобы не было замечаний от ESLint
-getRandomInteger();
 
 // Функция получения случайного числа с плавающей точкой из переданного диапазона включительно.
 
@@ -30,8 +28,6 @@ const getRandomFloat = (min, max, numbersAfterPoint) => {
 
   return Number(randomNumber.toFixed(numbersAfterPoint));
 };
-//вызов функции, чтобы не было замечаний от ESLint
-getRandomFloat();
 
 const TITLES_OF_PLACEMENT = [
   'Гостиница Султан',
@@ -116,13 +112,8 @@ const getRandomElementOfArray = (elements) => {
 //Функция для сборки одного рекламного объявления. Будет создан один объект.
 const createAdvertisement = (idx) => {
   const currentIndex = idx + 1;
-  //Свойства для offer
-  const randomPrice = getRandomInteger(500, 5000);
-  const randomQuantityOfRooms = getRandomInteger(1, 20);
-  const randomQuantityOfGuests = getRandomInteger(1, 10);
-  const getRandomFeatures = getRandomArraySlice(FEATURES_OF_PLACEMENT);
 
-  //Свойства для location
+  //Значения ключей для location
   const randomLatitude = getRandomFloat(35.65, 35.7, 5);
   const randomLongitude = getRandomFloat(139.7, 139.8, 5);
 
@@ -133,13 +124,13 @@ const createAdvertisement = (idx) => {
     offer: {
       title: getRandomElementOfArray(TITLES_OF_PLACEMENT),
       address: `${randomLatitude}, ${randomLongitude}`,
-      price: randomPrice,
+      price: getRandomInteger(500, 5000),
       type: getRandomElementOfArray(TYPE_OF_PLACEMENT),
-      rooms: randomQuantityOfRooms,
-      guests: randomQuantityOfGuests,
+      rooms: getRandomInteger(1, 20),
+      guests: getRandomInteger(1, 10),
       checkin: getRandomElementOfArray(TIME_CHECKIN_CHECKOUT),
       checkout: getRandomElementOfArray(TIME_CHECKIN_CHECKOUT),
-      features: getRandomFeatures,
+      features: getRandomArraySlice(FEATURES_OF_PLACEMENT),
       description: getRandomElementOfArray(DESCRIPTION_OF_PLACEMENT),
       photos: getRandomPhotos(PHOTOS_OF_PLACEMENT, getRandomInteger(1, 10)),
     },
