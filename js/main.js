@@ -87,22 +87,6 @@ const PHOTOS_OF_PLACEMENT = [
 //Функция по генерации массива случайной длинны из переданного массива. Минимальное количество элелементов в новом массиве: 1.
 const getRandomArraySlice = (array) => array.sort(() => 0.5 - Math.random()).slice(0, getRandomInteger(1, array.length));
 
-//Функция для получения необходимого количества значений исходного массива с записью в новый массив.
-//Вне зависимости от того, больше по количеству элементов должен быть новый массив или меньше.
-const getRandomPhotos = (arrayWithPhotos, amountOfPhotos) => {
-  const resultArray = [];
-  for (let i = 0; i < amountOfPhotos; i++) {
-    for (let j = 0; j < arrayWithPhotos.length; j++) {
-      if (resultArray.length >= amountOfPhotos){
-        break;
-      } else {
-        resultArray.push(arrayWithPhotos[j]);
-      }
-    }
-  }
-  return resultArray;
-};
-
 //Функция для декомпозиции кода. Позволяет получить случайный элемент переданного массива.
 const getRandomElementOfArray = (elements) => {
   const result = elements[getRandomInteger(0, elements.length - 1)];
@@ -132,7 +116,7 @@ const createAdvertisement = (idx) => {
       checkout: getRandomElementOfArray(TIME_CHECKIN_CHECKOUT),
       features: getRandomArraySlice(FEATURES_OF_PLACEMENT),
       description: getRandomElementOfArray(DESCRIPTION_OF_PLACEMENT),
-      photos: getRandomPhotos(PHOTOS_OF_PLACEMENT, getRandomInteger(1, 10)),
+      photos: getRandomArraySlice(PHOTOS_OF_PLACEMENT),
     },
     location: {
       lat: randomLatitude,
