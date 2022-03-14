@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomFloat, getRandomElementOfArray, getRandomArraySlice } from './helping-fns.js';
+import { getRandomInteger, getRandomFloat, getRandomElementOfArray, getRandomArraySlice } from './utils.js';
 
 const TITLES_OF_PLACEMENT = [
   'Гостиница Султан',
