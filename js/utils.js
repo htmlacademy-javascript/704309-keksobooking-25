@@ -34,6 +34,6 @@ const getRandomFloat = (min, max, numbersAfterPoint) => {
 const getRandomElementOfArray = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
 //Функция по генерации массива случайной длинны из переданного массива. Минимальное количество элелементов в новом массиве: 1.
-const getRandomArraySlice = (array) => array.sort(() => 0.5 - Math.random()).slice(0, getRandomInteger(1, array.length));
+const getRandomArraySlice = (array) => array.sort(() => 0.5 - Math.random()).slice(0, getRandomInteger(0, array.length));
 
 export { getRandomInteger, getRandomFloat, getRandomElementOfArray, getRandomArraySlice };
