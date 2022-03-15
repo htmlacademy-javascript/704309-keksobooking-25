@@ -38,16 +38,24 @@ const getRandomArraySlice = (array) => array.sort(() => 0.5 - Math.random()).sli
 
 //Функция для определения типа жилья
 function getOfferType (type) {
+  const BuildingType = {
+    FLAT: 'flat',
+    BUNGALOW: 'bungalow',
+    HOUSE: 'house',
+    PALACE: 'palace',
+    HOTEL: 'hotel',
+  };
+
   switch (type) {
-    case 'flat':
+    case BuildingType.FLAT:
       return 'Квартира';
-    case 'bungalow':
+    case BuildingType.BUNGALOW:
       return 'Бунгало';
-    case 'house':
+    case BuildingType.HOUSE:
       return 'Дом';
-    case 'palace':
+    case BuildingType.PALACE:
       return 'Дворец';
-    case 'hotel':
+    case BuildingType.HOTEL:
       return 'Отель';
     default:
       throw Error('Incorrect type');
