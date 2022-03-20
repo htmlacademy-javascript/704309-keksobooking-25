@@ -394,6 +394,10 @@ fieldset {
           box-shadow: 0 0 2px 2px #ff6547;
 }
 
+.ad-form__error {
+  color: red;
+}
+
 .ad-form__element--time {
   -ms-flex-preferred-size: 50%;
       flex-basis: 50%;
@@ -516,7 +520,7 @@ fieldset {
   width: calc(100% - 20px);
   max-width: calc(100% - 20px);
   min-height: 230px;
-
+  resize: none;
   padding-top: 10px;
 }
 
