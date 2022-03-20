@@ -73,11 +73,6 @@ function getCapacityOfGuestsErrorMessage () {
 pristine.addValidator(capacityOfGuestsField, validateCapacityOfGuests, getCapacityOfGuestsErrorMessage);
 
 adForm.addEventListener('submit', (evt) => {
-  // evt.preventDefault();
+  evt.preventDefault();
   pristine.validate();
-  // if (pristine.validate()){
-  //   console.log('Форма валидна')
-  // } else {
-  //   console.log('Форма не валидна')
-  // }
 });
