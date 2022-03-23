@@ -1,4 +1,5 @@
-import { createManyAdvertisements } from './mock-data.js';
-import { renderPopup } from './render-ads.js';
+import { renderPopupsNeededAmount } from './render-ads.js';
 import './form.js';
-renderPopup(createManyAdvertisements());
+
+const REQUIRED_RENDERED_ADS_AMOUNT = 1;
+renderPopupsNeededAmount(REQUIRED_RENDERED_ADS_AMOUNT);
