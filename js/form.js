@@ -1,3 +1,4 @@
+import { TIME_CHECKIN_CHECKOUT, TYPE_OF_PLACEMENT } from './mock-data.js';
 //Валидация с помощью библиотеки PristineJS
 const adForm = document.querySelector('.ad-form');
 
@@ -11,18 +12,32 @@ const pristine = new Pristine(adForm, {
 });
 
 //Валидация поля title на количество введённых символов
-function validateTitleLength (value) {
-  return value.length >= 30 && value.length <= 100;
-}
+const validateTitleLength = (value) => {
+  const minTitleLength = 30;
+  const maxTitleLength = 100;
+  return value.length >= minTitleLength && value.length <= maxTitleLength;
+};
 pristine.addValidator(adForm.querySelector('#title'), validateTitleLength, 'От 30 до 100 символов');
 
 //Валидация поля price на максимальное значение
-function validatePrice (value) {
-  return value <= 100000;
-}
-pristine.addValidator(adForm.querySelector('#price'), validatePrice, 'Максимальное значение:100 000');
+const priceField = adForm.querySelector('#price');
+const maxPriceValue = 100000;
+const validatePriceField = (value) => {
+  if (value <= maxPriceValue && value >= priceField.dataset.pristineMin){
+    return true;
+  }
+};
 
-//"Синхронизация" полей room_number и capacity. И валидация поля capacity
+const getPriceFieldErrorMessage = () => {
+  if (priceField.dataset.pristineMin >= priceField.value) {
+    return `Минимальная цена ${priceField.placeholder}`;
+  } else if (priceField.value > maxPriceValue) {
+    return `Максимальная цена ${maxPriceValue}`;
+  }
+};
+pristine.addValidator(priceField, validatePriceField, getPriceFieldErrorMessage);
+
+//"Синхронизация" полей room_number и capacity
 const roomNumberField = adForm.querySelector('[name="rooms"]');
 const capacityOfGuestsField = adForm.querySelector('[name="capacity"]');
 const amountOfGuestsOption = {
@@ -31,46 +46,61 @@ const amountOfGuestsOption = {
   '3': ['3', '2', '1'],
   '100': ['0']
 };
-
-function validateCapacityOfGuests () {
-  amountOfGuestsOption[roomNumberField.value].includes(capacityOfGuestsField.value);
-}
-
-function getCapacityOfGuestsErrorMessage () {
-  if (roomNumberField.value === '1') {
-    if (roomNumberField.value === '1' && capacityOfGuestsField.value === '1'){
-      return ``;
-    } else {
-      return `\xa0\xa0 ${roomNumberField.value} комната для ${roomNumberField.value} гостя`;
-    }
-  }
-
-  if (roomNumberField.value === '2'){
-    if (roomNumberField.value === '2' && (capacityOfGuestsField.value === '2' || capacityOfGuestsField.value === '1')){
-      return ``;
-    } else {
-      return `\xa0\xa0 ${roomNumberField.value} ${roomNumberField.value === '1' ? 'комната' : 'комнаты'}  для 1-2 гостей`;
-    }
-  }
-
-  if (roomNumberField.value === '3') {
-    if (roomNumberField.value === '3' && (capacityOfGuestsField.value === '3' || capacityOfGuestsField.value === '2' || capacityOfGuestsField.value === '1')){
-      return ``;
-    } else {
-      return `\xa0\xa0 ${roomNumberField.value} ${roomNumberField.value === '1' ? 'комната' : 'комнаты'}  для 1-3 гостей`;
-    }
-  }
-
-  if (roomNumberField.value === '100') {
-    if (roomNumberField.value === '100' && capacityOfGuestsField.value === '0') {
-      return ``;
-    } else {
-      return `\xa0\xa0 ${roomNumberField.value} комнат не для гостей`;
-    }
-  }
-}
-
+//Функция валидации поля capacity
+const validateCapacityOfGuests = () => amountOfGuestsOption[roomNumberField.value].includes(capacityOfGuestsField.value);
+//Функция вывода сообщения об ошибке
+const getCapacityOfGuestsErrorMessage = () => 'Недопустимое значение';
 pristine.addValidator(capacityOfGuestsField, validateCapacityOfGuests, getCapacityOfGuestsErrorMessage);
+
+//Валидация полей type и price
+const PRICES_OF_PLACEMENT = [
+  10000,
+  1000,
+  5000,
+  0,
+  3000
+];
+//Функция для валидации поля price в зависимости от значения поля type
+const typePlacementField = adForm.querySelector('#type');
+const getMinPriceValue = () => {
+  PRICES_OF_PLACEMENT.forEach((element, i) => {
+    if (TYPE_OF_PLACEMENT[i] === typePlacementField.value) {
+      priceField.placeholder = element;
+      priceField.dataset.pristineMin = element;
+    }
+  });
+  return true;
+};
+pristine.addValidator(typePlacementField, getMinPriceValue);
+
+//"Синхронизация" полей timein и timeout
+const timeinField = adForm.querySelector('#timein');
+const timeoutField = adForm.querySelector('#timeout');
+
+const syncingTimeFieldsValues = () => {
+  timeinField.addEventListener('change', (evt) => {
+    if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[0]) {
+      timeoutField.value = TIME_CHECKIN_CHECKOUT[0];
+    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[1]) {
+      timeoutField.value = TIME_CHECKIN_CHECKOUT[1];
+    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[2]) {
+      timeoutField.value = TIME_CHECKIN_CHECKOUT[2];
+    }
+  });
+
+  timeoutField.addEventListener('change', (evt) => {
+    if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[0]) {
+      timeinField.value = TIME_CHECKIN_CHECKOUT[0];
+    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[1]) {
+      timeinField.value = TIME_CHECKIN_CHECKOUT[1];
+    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[2]) {
+      timeinField.value = TIME_CHECKIN_CHECKOUT[2];
+    }
+  });
+  return true;
+};
+pristine.addValidator(timeinField, syncingTimeFieldsValues);
+pristine.addValidator(timeoutField, syncingTimeFieldsValues);
 
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();

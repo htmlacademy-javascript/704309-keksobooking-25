@@ -1,9 +1,10 @@
 import { getOfferType } from './utils.js';
+import { createManyAdvertisementsData } from './mock-data.js';
 
 const renderPopup = (dataForRendering) => {
   const similarContainerElement = document.querySelector('#map-canvas'); //место отрисовки карточек полученных на основе шаблона
   const similarCardTemplate = document.querySelector('#card').content.querySelector('.popup'); //получение разметки шаблона
-  const similarCards = dataForRendering[0]; //получен первый эелемент массива объявлений
+  const similarCards = dataForRendering; //получен объект с данными из массива объявлений
 
   const cardElement = similarCardTemplate.cloneNode(true); //получен клонированный элемент
 
@@ -67,4 +68,11 @@ const renderPopup = (dataForRendering) => {
   return similarContainerElement.appendChild(cardElement); //отрисовка клонированного элемента в поле #map-canvas
 };
 
-export { renderPopup };
+//Функция по рендерингу необходимого количества объявлений
+const renderPopupsNeededAmount = (amount) => {
+  for (let i = 0; i < amount; i++) {
+    renderPopup(createManyAdvertisementsData()[i]);
+  }
+};
+
+export { renderPopupsNeededAmount };
