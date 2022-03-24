@@ -91,5 +91,5 @@ const createAdvertisement = (idx) => {
 //Функция по созданию массива объектов аналогичных переданному объекту.
 const NUMBER_OF_ADVERTISEMENTS = 10;
 const createManyAdvertisementsData = () => Array.from({length: NUMBER_OF_ADVERTISEMENTS}).map((item, idx) => createAdvertisement(idx));
-
-export { createManyAdvertisementsData, TIME_CHECKIN_CHECKOUT, TYPE_OF_PLACEMENT };
+const cards = createManyAdvertisementsData();
+export { cards, TYPE_OF_PLACEMENT };

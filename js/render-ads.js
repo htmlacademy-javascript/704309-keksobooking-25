@@ -1,5 +1,4 @@
 import { getOfferType } from './utils.js';
-import { createManyAdvertisementsData } from './mock-data.js';
 
 const renderPopup = (dataForRendering) => {
   const similarContainerElement = document.querySelector('#map-canvas'); //место отрисовки карточек полученных на основе шаблона
@@ -68,11 +67,4 @@ const renderPopup = (dataForRendering) => {
   return similarContainerElement.appendChild(cardElement); //отрисовка клонированного элемента в поле #map-canvas
 };
 
-//Функция по рендерингу необходимого количества объявлений
-const renderPopupsNeededAmount = (amount) => {
-  for (let i = 0; i < amount; i++) {
-    renderPopup(createManyAdvertisementsData()[i]);
-  }
-};
-
-export { renderPopupsNeededAmount };
+export { renderPopup };
