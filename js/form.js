@@ -84,7 +84,46 @@ const onTimeChange = (evt) => {
 timeIn.addEventListener('change', onTimeChange);
 timeOut.addEventListener('change', onTimeChange);
 
-adForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
-});
+const validateAdForm = () => {
+  adForm.addEventListener('submit', (evt) => {
+    if(!pristine.validate()) {
+      evt.preventDefault();
+    }
+  });
+};
+
+//Изменение состояния страницы (Активное/Неактивное)
+const activatePage = (activate) => {
+  const mapForm = document.querySelector('.map__filters');
+  const mapFormSelectFields = mapForm.querySelectorAll('select');
+  const mapFormFieldsetField = mapForm.querySelector('fieldset');
+  const adFormFieldsetFields = adForm.querySelectorAll('fieldset');
+
+  if (activate) {
+    adForm.classList.remove('ad-form--disabled');
+    mapForm.classList.remove('map__filters--disabled');
+    for (let i = 0; i < adFormFieldsetFields.length; i++) {
+      adFormFieldsetFields[i].removeAttribute('disabled');
+    }
+
+    for (let i = 0; i < mapFormSelectFields.length; i++) {
+      mapFormSelectFields[i].removeAttribute('disabled');
+    }
+
+    mapFormFieldsetField.removeAttribute('disabled');
+  } else {
+    adForm.classList.add('ad-form--disabled');
+    mapForm.classList.add('map__filters--disabled');
+    for (let i = 0; i < adFormFieldsetFields.length; i++) {
+      adFormFieldsetFields[i].setAttribute('disabled', '');
+    }
+
+    for (let i = 0; i < mapFormSelectFields.length; i++) {
+      mapFormSelectFields[i].setAttribute('disabled', '');
+    }
+
+    mapFormFieldsetField.setAttribute('disabled', '');
+  }
+};
+
+export { validateAdForm, activatePage };
