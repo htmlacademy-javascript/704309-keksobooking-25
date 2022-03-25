@@ -1,4 +1,4 @@
-import { TIME_CHECKIN_CHECKOUT, TYPE_OF_PLACEMENT } from './mock-data.js';
+import { TYPE_OF_PLACEMENT } from './mock-data.js';
 //Валидация с помощью библиотеки PristineJS
 const adForm = document.querySelector('.ad-form');
 
@@ -13,17 +13,17 @@ const pristine = new Pristine(adForm, {
 
 //Валидация поля title на количество введённых символов
 const validateTitleLength = (value) => {
-  const minTitleLength = 30;
-  const maxTitleLength = 100;
-  return value.length >= minTitleLength && value.length <= maxTitleLength;
+  const MIN_TITLE_LENGTH = 30;
+  const MAX_TITLE_LENGTH = 100;
+  return value.length >= MIN_TITLE_LENGTH && value.length <= MAX_TITLE_LENGTH;
 };
 pristine.addValidator(adForm.querySelector('#title'), validateTitleLength, 'От 30 до 100 символов');
 
 //Валидация поля price на максимальное значение
 const priceField = adForm.querySelector('#price');
-const maxPriceValue = 100000;
+const MAX_PRICE_VALUE = 100000;
 const validatePriceField = (value) => {
-  if (value <= maxPriceValue && value >= priceField.dataset.pristineMin){
+  if (value <= MAX_PRICE_VALUE && value >= priceField.dataset.pristineMin){
     return true;
   }
 };
@@ -31,8 +31,8 @@ const validatePriceField = (value) => {
 const getPriceFieldErrorMessage = () => {
   if (priceField.dataset.pristineMin >= priceField.value) {
     return `Минимальная цена ${priceField.placeholder}`;
-  } else if (priceField.value > maxPriceValue) {
-    return `Максимальная цена ${maxPriceValue}`;
+  } else if (priceField.value > MAX_PRICE_VALUE) {
+    return `Максимальная цена ${MAX_PRICE_VALUE}`;
   }
 };
 pristine.addValidator(priceField, validatePriceField, getPriceFieldErrorMessage);
@@ -74,35 +74,56 @@ const getMinPriceValue = () => {
 pristine.addValidator(typePlacementField, getMinPriceValue);
 
 //"Синхронизация" полей timein и timeout
-const timeinField = adForm.querySelector('#timein');
-const timeoutField = adForm.querySelector('#timeout');
+const timeIn = adForm.querySelector('#timein');
+const timeOut = adForm.querySelector('#timeout');
 
-const syncingTimeFieldsValues = () => {
-  timeinField.addEventListener('change', (evt) => {
-    if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[0]) {
-      timeoutField.value = TIME_CHECKIN_CHECKOUT[0];
-    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[1]) {
-      timeoutField.value = TIME_CHECKIN_CHECKOUT[1];
-    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[2]) {
-      timeoutField.value = TIME_CHECKIN_CHECKOUT[2];
-    }
-  });
-
-  timeoutField.addEventListener('change', (evt) => {
-    if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[0]) {
-      timeinField.value = TIME_CHECKIN_CHECKOUT[0];
-    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[1]) {
-      timeinField.value = TIME_CHECKIN_CHECKOUT[1];
-    } else if (evt.currentTarget.value === TIME_CHECKIN_CHECKOUT[2]) {
-      timeinField.value = TIME_CHECKIN_CHECKOUT[2];
-    }
-  });
-  return true;
+const onTimeChange = (evt) => {
+  timeIn.value = evt.target.value;
+  timeOut.value = evt.target.value;
 };
-pristine.addValidator(timeinField, syncingTimeFieldsValues);
-pristine.addValidator(timeoutField, syncingTimeFieldsValues);
+timeIn.addEventListener('change', onTimeChange);
+timeOut.addEventListener('change', onTimeChange);
 
-adForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
-});
+const validateAdForm = () => {
+  adForm.addEventListener('submit', (evt) => {
+    if(!pristine.validate()) {
+      evt.preventDefault();
+    }
+  });
+};
+
+//Изменение состояния страницы (Активное/Неактивное)
+const activatePage = (activate) => {
+  const mapForm = document.querySelector('.map__filters');
+  const mapFormSelectFields = mapForm.querySelectorAll('select');
+  const mapFormFieldsetField = mapForm.querySelector('fieldset');
+  const adFormFieldsetFields = adForm.querySelectorAll('fieldset');
+
+  if (activate) {
+    adForm.classList.remove('ad-form--disabled');
+    mapForm.classList.remove('map__filters--disabled');
+    for (let i = 0; i < adFormFieldsetFields.length; i++) {
+      adFormFieldsetFields[i].removeAttribute('disabled');
+    }
+
+    for (let i = 0; i < mapFormSelectFields.length; i++) {
+      mapFormSelectFields[i].removeAttribute('disabled');
+    }
+
+    mapFormFieldsetField.removeAttribute('disabled');
+  } else {
+    adForm.classList.add('ad-form--disabled');
+    mapForm.classList.add('map__filters--disabled');
+    for (let i = 0; i < adFormFieldsetFields.length; i++) {
+      adFormFieldsetFields[i].setAttribute('disabled', '');
+    }
+
+    for (let i = 0; i < mapFormSelectFields.length; i++) {
+      mapFormSelectFields[i].setAttribute('disabled', '');
+    }
+
+    mapFormFieldsetField.setAttribute('disabled', '');
+  }
+};
+
+export { validateAdForm, activatePage };

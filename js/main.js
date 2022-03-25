@@ -1,5 +1,7 @@
-import { renderPopupsNeededAmount } from './render-ads.js';
-import './form.js';
+import { renderPopup } from './render-ads.js';
+import { cards } from './mock-data.js';
+import { validateAdForm, activatePage } from './form.js';
 
-const REQUIRED_RENDERED_ADS_AMOUNT = 1;
-renderPopupsNeededAmount(REQUIRED_RENDERED_ADS_AMOUNT);
+renderPopup(cards[0]);
+validateAdForm();
+activatePage(true);
