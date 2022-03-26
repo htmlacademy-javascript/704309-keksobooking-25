@@ -95,34 +95,16 @@ const validateAdForm = () => {
 //Изменение состояния страницы (Активное/Неактивное)
 const activatePage = (activate) => {
   const mapForm = document.querySelector('.map__filters');
-  const mapFormSelectFields = mapForm.querySelectorAll('select');
-  const mapFormFieldsetField = mapForm.querySelector('fieldset');
-  const adFormFieldsetFields = adForm.querySelectorAll('fieldset');
+  const mapFormFields = mapForm.children;
+  const adFormFields = adForm.children;
 
-  if (activate) {
-    adForm.classList.remove('ad-form--disabled');
-    mapForm.classList.remove('map__filters--disabled');
-    for (let i = 0; i < adFormFieldsetFields.length; i++) {
-      adFormFieldsetFields[i].removeAttribute('disabled');
-    }
-
-    for (let i = 0; i < mapFormSelectFields.length; i++) {
-      mapFormSelectFields[i].removeAttribute('disabled');
-    }
-
-    mapFormFieldsetField.removeAttribute('disabled');
-  } else {
-    adForm.classList.add('ad-form--disabled');
-    mapForm.classList.add('map__filters--disabled');
-    for (let i = 0; i < adFormFieldsetFields.length; i++) {
-      adFormFieldsetFields[i].setAttribute('disabled', '');
-    }
-
-    for (let i = 0; i < mapFormSelectFields.length; i++) {
-      mapFormSelectFields[i].setAttribute('disabled', '');
-    }
-
-    mapFormFieldsetField.setAttribute('disabled', '');
+  mapForm.classList[activate ? 'remove' : 'add']('map__filters--disabled');
+  adForm.classList[activate ? 'remove' : 'add']('ad-form--disabled');
+  for (const mapFormField of mapFormFields){
+    mapFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+  }
+  for (const adFormField of adFormFields) {
+    adFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
   }
 };
 
