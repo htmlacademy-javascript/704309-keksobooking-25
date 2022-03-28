@@ -93,7 +93,7 @@ const validateAdForm = () => {
 };
 
 //Изменение состояния страницы (Активное/Неактивное)
-const activatePage = (activate) => {
+const activatePage = (activate = false) => {
   const mapForm = document.querySelector('.map__filters');
   const mapFormFields = mapForm.children;
   const adFormFields = adForm.children;
