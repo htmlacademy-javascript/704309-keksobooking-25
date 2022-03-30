@@ -1,7 +1,6 @@
-import { renderPopup } from './render-ads.js';
-import { cards } from './mock-data.js';
 import { validateAdForm, activatePage } from './form.js';
+import { isMapInitialized } from './map.js';
+import './slider.js';
 
-renderPopup(cards[0]);
 validateAdForm();
-activatePage(true);
+activatePage( isMapInitialized );

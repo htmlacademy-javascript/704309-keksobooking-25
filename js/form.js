@@ -19,25 +19,7 @@ const validateTitleLength = (value) => {
 };
 pristine.addValidator(adForm.querySelector('#title'), validateTitleLength, 'От 30 до 100 символов');
 
-//Валидация поля price на максимальное значение
-const priceField = adForm.querySelector('#price');
-const MAX_PRICE_VALUE = 100000;
-const validatePriceField = (value) => {
-  if (value <= MAX_PRICE_VALUE && value >= priceField.dataset.pristineMin){
-    return true;
-  }
-};
-
-const getPriceFieldErrorMessage = () => {
-  if (priceField.dataset.pristineMin >= priceField.value) {
-    return `Минимальная цена ${priceField.placeholder}`;
-  } else if (priceField.value > MAX_PRICE_VALUE) {
-    return `Максимальная цена ${MAX_PRICE_VALUE}`;
-  }
-};
-pristine.addValidator(priceField, validatePriceField, getPriceFieldErrorMessage);
-
-//"Синхронизация" полей room_number и capacity
+//"Синхронизация" полей "Количество комнат" (room_number) и "Количество мест" (capacity)
 const roomNumberField = adForm.querySelector('[name="rooms"]');
 const capacityOfGuestsField = adForm.querySelector('[name="capacity"]');
 const amountOfGuestsOption = {
@@ -61,6 +43,7 @@ const PRICES_OF_PLACEMENT = [
   3000
 ];
 //Функция для валидации поля price в зависимости от значения поля type
+const priceField = adForm.querySelector('#price');
 const typePlacementField = adForm.querySelector('#type');
 const getMinPriceValue = () => {
   PRICES_OF_PLACEMENT.forEach((element, i) => {
@@ -73,6 +56,26 @@ const getMinPriceValue = () => {
 };
 pristine.addValidator(typePlacementField, getMinPriceValue);
 
+//Валидация поля price на максимальное значение
+const PRICE_FIELD_PRISTINE_MIN_START_VALUE = 1000;
+priceField.dataset.pristineMin = PRICE_FIELD_PRISTINE_MIN_START_VALUE;
+const MAX_PRICE_VALUE = 100000;
+const validatePriceField = (value) => {
+  if (value >= MAX_PRICE_VALUE || priceField.dataset.pristineMin >= value){
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const getPriceFieldErrorMessage = () => {
+  if (priceField.dataset.pristineMin >= priceField.value) {
+    return `Минимальная цена ${priceField.dataset.pristineMin}`;
+  } else if (priceField.value >= MAX_PRICE_VALUE) {
+    return `Максимальная цена ${MAX_PRICE_VALUE}`;
+  }
+};
+pristine.addValidator(priceField, validatePriceField, getPriceFieldErrorMessage);
 //"Синхронизация" полей timein и timeout
 const timeIn = adForm.querySelector('#timein');
 const timeOut = adForm.querySelector('#timeout');
@@ -93,36 +96,18 @@ const validateAdForm = () => {
 };
 
 //Изменение состояния страницы (Активное/Неактивное)
-const activatePage = (activate) => {
+const activatePage = (activate = false) => {
   const mapForm = document.querySelector('.map__filters');
-  const mapFormSelectFields = mapForm.querySelectorAll('select');
-  const mapFormFieldsetField = mapForm.querySelector('fieldset');
-  const adFormFieldsetFields = adForm.querySelectorAll('fieldset');
+  const mapFormFields = mapForm.children;
+  const adFormFields = adForm.children;
 
-  if (activate) {
-    adForm.classList.remove('ad-form--disabled');
-    mapForm.classList.remove('map__filters--disabled');
-    for (let i = 0; i < adFormFieldsetFields.length; i++) {
-      adFormFieldsetFields[i].removeAttribute('disabled');
-    }
-
-    for (let i = 0; i < mapFormSelectFields.length; i++) {
-      mapFormSelectFields[i].removeAttribute('disabled');
-    }
-
-    mapFormFieldsetField.removeAttribute('disabled');
-  } else {
-    adForm.classList.add('ad-form--disabled');
-    mapForm.classList.add('map__filters--disabled');
-    for (let i = 0; i < adFormFieldsetFields.length; i++) {
-      adFormFieldsetFields[i].setAttribute('disabled', '');
-    }
-
-    for (let i = 0; i < mapFormSelectFields.length; i++) {
-      mapFormSelectFields[i].setAttribute('disabled', '');
-    }
-
-    mapFormFieldsetField.setAttribute('disabled', '');
+  mapForm.classList[activate ? 'remove' : 'add']('map__filters--disabled');
+  adForm.classList[activate ? 'remove' : 'add']('ad-form--disabled');
+  for (const mapFormField of mapFormFields){
+    mapFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+  }
+  for (const adFormField of adFormFields) {
+    adFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
   }
 };
 
