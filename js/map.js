@@ -1,15 +1,19 @@
 import { cards } from './mock-data.js';
 import { renderPopup } from './render-ads.js';
-let isMapInitialized = false;
+import { activatePage } from './form.js';
+const START_COORDS = {
+  lat: 35.6868,
+  lng: 139.7506,
+};
 
 //Создание карты
 const map = L.map('map-canvas')
   .on('load', () => {
-    isMapInitialized = true;
+    activatePage(true);
   })
   .setView({
-    lat: 35.6895,
-    lng: 139.692,
+    lat: START_COORDS.lat,
+    lng: START_COORDS.lng,
   }, 12);
 
 //Создание слоя с изображениями карт
@@ -29,8 +33,8 @@ const mainPinIcon = L.icon({
 //Создание главного маркера
 const mainMarker = L.marker(
   {
-    lat: 35.6895,
-    lng: 139.692,
+    lat: START_COORDS.lat,
+    lng: START_COORDS.lng,
   },
   {
     draggable: true,
@@ -85,6 +89,3 @@ cards.forEach((card) => {
     .addTo(map)
     .bindPopup(renderPopup(card));
 });
-
-export { isMapInitialized };
-

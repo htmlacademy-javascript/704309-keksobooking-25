@@ -56,26 +56,19 @@ const getMinPriceValue = () => {
 };
 pristine.addValidator(typePlacementField, getMinPriceValue);
 
-//Валидация поля price на максимальное значение
-const PRICE_FIELD_PRISTINE_MIN_START_VALUE = 1000;
-priceField.dataset.pristineMin = PRICE_FIELD_PRISTINE_MIN_START_VALUE;
+//Валидация поля price на максимальное и минимальное значения
 const MAX_PRICE_VALUE = 100000;
-const validatePriceField = (value) => {
-  if (value >= MAX_PRICE_VALUE || priceField.dataset.pristineMin >= value){
-    return false;
-  } else {
-    return true;
-  }
-};
+const validatePriceField = (value) => !(parseInt(value, 10) > MAX_PRICE_VALUE || parseInt(priceField.dataset.pristineMin, 10) > parseInt(value, 10));
 
 const getPriceFieldErrorMessage = () => {
-  if (priceField.dataset.pristineMin >= priceField.value) {
+  if (parseInt(priceField.dataset.pristineMin, 10) > parseInt(priceField.value, 10)) {
     return `Минимальная цена ${priceField.dataset.pristineMin}`;
-  } else if (priceField.value >= MAX_PRICE_VALUE) {
+  } else if (parseInt(priceField.value, 10) > MAX_PRICE_VALUE) {
     return `Максимальная цена ${MAX_PRICE_VALUE}`;
   }
 };
 pristine.addValidator(priceField, validatePriceField, getPriceFieldErrorMessage);
+
 //"Синхронизация" полей timein и timeout
 const timeIn = adForm.querySelector('#timein');
 const timeOut = adForm.querySelector('#timeout');
