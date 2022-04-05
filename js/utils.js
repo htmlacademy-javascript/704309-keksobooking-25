@@ -13,7 +13,6 @@ const getRandomInteger = (min, max) => {
   return Math.round(Math.random() * (max - min) + min);
 };
 
-
 // Функция получения случайного числа с плавающей точкой из переданного диапазона включительно.
 
 const getRandomFloat = (min, max, numbersAfterPoint) => {
@@ -62,5 +61,15 @@ function getOfferType (type) {
   }
 }
 
-export { getRandomInteger, getRandomFloat, getRandomElementOfArray, getRandomArraySlice, getOfferType };
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+const TYPE_OF_PLACEMENT = [
+  'palace',
+  'flat',
+  'house',
+  'bungalow',
+  'hotel',
+];
+
+export { getRandomInteger, getRandomFloat, getRandomElementOfArray, getRandomArraySlice, getOfferType, isEscapeKey, TYPE_OF_PLACEMENT };
 

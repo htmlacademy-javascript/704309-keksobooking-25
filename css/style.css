@@ -545,7 +545,7 @@ fieldset {
   width: calc(100% - 20px);
   max-width: calc(100% - 20px);
   min-height: 230px;
-
+  resize: none;
   padding-top: 10px;
 }
 
@@ -975,7 +975,8 @@ fieldset {
 }
 
 .success__message,
-.error__message {
+.error__message,
+.error__message--text {
   position: relative;
 
   color: #ffffff;
@@ -1007,7 +1008,8 @@ fieldset {
   background-image: url("../img/muffin-red.svg");
 }
 
-.error__button {
+.error__button,
+.error__button--close {
   padding: 10px;
 
   font-size: 22px;

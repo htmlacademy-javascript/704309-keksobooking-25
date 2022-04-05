@@ -15,7 +15,7 @@ const renderPopup = (dataForRendering) => {
   cardElement.querySelector('.popup__avatar').src = similarCards.author.avatar;
 
   //отрисовка поля description
-  if (similarCards.offer.description.length === 0) {
+  if (similarCards.offer.description === undefined) {
     cardElement.querySelector('.popup__description').hidden = true;
   } else {
     cardElement.querySelector('.popup__description').textContent = similarCards.offer.description;
@@ -28,7 +28,7 @@ const renderPopup = (dataForRendering) => {
   cardElement.querySelector('.popup__text--price').appendChild(priceElement);
 
   //отрисовка поля features
-  if (similarCards.offer.features.length === 0) {
+  if (similarCards.offer.features === undefined) {
     cardElement.querySelector('.popup__features').hidden = true;
   } else {
     const featuresArray = similarCards.offer.features; //доступные удобства. Массив строк.
@@ -52,7 +52,7 @@ const renderPopup = (dataForRendering) => {
   const photosContainerElement = cardElement.querySelector('.popup__photos');
   const photoListFragment = document.createDocumentFragment();
 
-  if (similarCards.offer.photos.length === 0) {
+  if (similarCards.offer.photos === undefined) {
     cardElement.querySelector('.popup__photo').hidden = true;
   } else {
     photosArray.forEach((photo) => {

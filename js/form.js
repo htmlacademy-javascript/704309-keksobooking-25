@@ -1,4 +1,6 @@
-import { TYPE_OF_PLACEMENT } from './mock-data.js';
+import { TYPE_OF_PLACEMENT } from './utils.js';
+import { resetFormsAndMap } from './form-reset.js';
+
 //Валидация с помощью библиотеки PristineJS
 const adForm = document.querySelector('.ad-form');
 
@@ -80,28 +82,54 @@ const onTimeChange = (evt) => {
 timeIn.addEventListener('change', onTimeChange);
 timeOut.addEventListener('change', onTimeChange);
 
-const validateAdForm = () => {
+//Функции для блокировки/разблокировки кнопки "Опубликовать"
+const submitButton = adForm.querySelector('.ad-form__submit');
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.style.backgroundColor = '#ccc';
+  submitButton.style.color = '#b8b8b8';
+  submitButton.textContent = 'Отправляю...';
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.style.backgroundColor = 'white';
+  submitButton.style.color = 'black';
+  submitButton.textContent = 'Опубликовать';
+};
+
+//Проверка отправляемой формы на валидность. Обработка ответа при помощи "fetch"
+const setAdFormSubmit = (onSuccess, onFail) => {
   adForm.addEventListener('submit', (evt) => {
-    if(!pristine.validate()) {
-      evt.preventDefault();
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if(isValid) {
+      blockSubmitButton();
+      const formData = new FormData(evt.target);
+
+      fetch(
+        'https://25.javascript.pages.academy/keksobooking',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      )
+        .then((response) => {
+          if (response.ok) {
+            onSuccess();
+            unblockSubmitButton();
+            resetFormsAndMap();
+          } else {
+            onFail();
+            unblockSubmitButton();
+          }
+        })
+        .catch(() => {
+          // onFail();
+        });
     }
   });
 };
 
-//Изменение состояния страницы (Активное/Неактивное)
-const activatePage = (activate = false) => {
-  const mapForm = document.querySelector('.map__filters');
-  const mapFormFields = mapForm.children;
-  const adFormFields = adForm.children;
-
-  mapForm.classList[activate ? 'remove' : 'add']('map__filters--disabled');
-  adForm.classList[activate ? 'remove' : 'add']('ad-form--disabled');
-  for (const mapFormField of mapFormFields){
-    mapFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
-  }
-  for (const adFormField of adFormFields) {
-    adFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
-  }
-};
-
-export { validateAdForm, activatePage };
+export { setAdFormSubmit };
