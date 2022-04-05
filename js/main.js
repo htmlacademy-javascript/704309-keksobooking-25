@@ -1,6 +1,7 @@
-import { validateAdForm, activatePage } from './form.js';
-import { isMapInitialized } from './map.js';
+import { setAdFormSubmit } from './form.js';
+import './map.js';
 import './slider.js';
+import { openModalSuccessSendData, openModalErrorSendData } from './modals.js';
+import './form-reset.js';
 
-validateAdForm();
-activatePage( isMapInitialized );
+setAdFormSubmit(openModalSuccessSendData, openModalErrorSendData);

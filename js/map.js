@@ -1,16 +1,36 @@
-import { cards } from './mock-data.js';
 import { renderPopup } from './render-ads.js';
-let isMapInitialized = false;
+import { getServerData } from './server-data.js';
+const START_COORDS = {
+  lat: 35.6824,
+  lng: 139.75219,
+};
+
+//Изменение состояния страницы (Активное/Неактивное)
+const activatePage = (activate = false) => {
+  const adForm = document.querySelector('.ad-form');
+  const mapForm = document.querySelector('.map__filters');
+  const mapFormFields = mapForm.children;
+  const adFormFields = adForm.children;
+
+  mapForm.classList[activate ? 'remove' : 'add']('map__filters--disabled');
+  adForm.classList[activate ? 'remove' : 'add']('ad-form--disabled');
+  for (const mapFormField of mapFormFields){
+    mapFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+  }
+  for (const adFormField of adFormFields) {
+    adFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+  }
+};
 
 //Создание карты
 const map = L.map('map-canvas')
   .on('load', () => {
-    isMapInitialized = true;
+    activatePage(true);
   })
   .setView({
-    lat: 35.6895,
-    lng: 139.692,
-  }, 12);
+    lat: START_COORDS.lat,
+    lng: START_COORDS.lng,
+  }, 13);
 
 //Создание слоя с изображениями карт
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -29,8 +49,8 @@ const mainPinIcon = L.icon({
 //Создание главного маркера
 const mainMarker = L.marker(
   {
-    lat: 35.6895,
-    lng: 139.692,
+    lat: START_COORDS.lat,
+    lng: START_COORDS.lng,
   },
   {
     draggable: true,
@@ -48,18 +68,17 @@ mainMarker.on('moveend', (evt) => {
 });
 
 //Возврат в главной метки в изначальное положение, восстановление изначального масштаба карты
-const resetButtonElement = document.querySelector('.ad-form__reset');
-resetButtonElement.addEventListener('click', () => {
+const resetMarkersAndMapCoords = () => {
   mainMarker.setLatLng({
-    lat: 35.6895,
-    lng: 139.692,
+    lat: START_COORDS.lat,
+    lng: START_COORDS.lng,
   });
 
   map.setView({
-    lat: 35.6895,
-    lng: 139.692,
-  }, 12);
-});
+    lat: START_COORDS.lat,
+    lng: START_COORDS.lng,
+  }, 13);
+};
 
 //Замена изображения штатной иконки для обычной метки
 const icon = L.icon({
@@ -68,23 +87,26 @@ const icon = L.icon({
   iconAnchor: [20, 40],
 });
 
-//Отображение обычных меткок на карте, реализация показа всплывающего окна с подробной информвцией
+//Отображение обычных меткок на карте. Реализация показа всплывающего окна с подробной информацией
 //при нажатии нажатии на любую из обычных меток
-cards.forEach((card) => {
-  const {lat, lng} = card.location;
-  const marker = L.marker({
-    lat,
-    lng,
-  },
-  {
-    icon,
+const renderSimpleMarkers = (cards) => {
+  for (let i = 0; i < cards.length; i++) {
+    const {lat, lng} = cards[i].location;
+    const marker = L.marker({
+      lat,
+      lng,
+    },
+    {
+      icon,
+    }
+    );
+
+    marker
+      .addTo(map)
+      .bindPopup(renderPopup(cards[i]));
   }
-  );
+};
 
-  marker
-    .addTo(map)
-    .bindPopup(renderPopup(card));
-});
+getServerData(renderSimpleMarkers);
 
-export { isMapInitialized };
-
+export { resetMarkersAndMapCoords };

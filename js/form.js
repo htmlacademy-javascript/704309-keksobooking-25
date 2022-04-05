@@ -1,4 +1,6 @@
-import { TYPE_OF_PLACEMENT } from './mock-data.js';
+import { TYPE_OF_PLACEMENT } from './utils.js';
+import { resetFormsAndMap } from './form-reset.js';
+
 //Валидация с помощью библиотеки PristineJS
 const adForm = document.querySelector('.ad-form');
 
@@ -56,26 +58,19 @@ const getMinPriceValue = () => {
 };
 pristine.addValidator(typePlacementField, getMinPriceValue);
 
-//Валидация поля price на максимальное значение
-const PRICE_FIELD_PRISTINE_MIN_START_VALUE = 1000;
-priceField.dataset.pristineMin = PRICE_FIELD_PRISTINE_MIN_START_VALUE;
+//Валидация поля price на максимальное и минимальное значения
 const MAX_PRICE_VALUE = 100000;
-const validatePriceField = (value) => {
-  if (value >= MAX_PRICE_VALUE || priceField.dataset.pristineMin >= value){
-    return false;
-  } else {
-    return true;
-  }
-};
+const validatePriceField = (value) => !(parseInt(value, 10) > MAX_PRICE_VALUE || parseInt(priceField.dataset.pristineMin, 10) > parseInt(value, 10));
 
 const getPriceFieldErrorMessage = () => {
-  if (priceField.dataset.pristineMin >= priceField.value) {
+  if (parseInt(priceField.dataset.pristineMin, 10) > parseInt(priceField.value, 10)) {
     return `Минимальная цена ${priceField.dataset.pristineMin}`;
-  } else if (priceField.value >= MAX_PRICE_VALUE) {
+  } else if (parseInt(priceField.value, 10) > MAX_PRICE_VALUE) {
     return `Максимальная цена ${MAX_PRICE_VALUE}`;
   }
 };
 pristine.addValidator(priceField, validatePriceField, getPriceFieldErrorMessage);
+
 //"Синхронизация" полей timein и timeout
 const timeIn = adForm.querySelector('#timein');
 const timeOut = adForm.querySelector('#timeout');
@@ -87,28 +82,54 @@ const onTimeChange = (evt) => {
 timeIn.addEventListener('change', onTimeChange);
 timeOut.addEventListener('change', onTimeChange);
 
-const validateAdForm = () => {
+//Функции для блокировки/разблокировки кнопки "Опубликовать"
+const submitButton = adForm.querySelector('.ad-form__submit');
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.style.backgroundColor = '#ccc';
+  submitButton.style.color = '#b8b8b8';
+  submitButton.textContent = 'Отправляю...';
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.style.backgroundColor = 'white';
+  submitButton.style.color = 'black';
+  submitButton.textContent = 'Опубликовать';
+};
+
+//Проверка отправляемой формы на валидность. Обработка ответа при помощи "fetch"
+const setAdFormSubmit = (onSuccess, onFail) => {
   adForm.addEventListener('submit', (evt) => {
-    if(!pristine.validate()) {
-      evt.preventDefault();
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if(isValid) {
+      blockSubmitButton();
+      const formData = new FormData(evt.target);
+
+      fetch(
+        'https://25.javascript.pages.academy/keksobooking',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      )
+        .then((response) => {
+          if (response.ok) {
+            onSuccess();
+            unblockSubmitButton();
+            resetFormsAndMap();
+          } else {
+            onFail();
+            unblockSubmitButton();
+          }
+        })
+        .catch(() => {
+          // onFail();
+        });
     }
   });
 };
 
-//Изменение состояния страницы (Активное/Неактивное)
-const activatePage = (activate = false) => {
-  const mapForm = document.querySelector('.map__filters');
-  const mapFormFields = mapForm.children;
-  const adFormFields = adForm.children;
-
-  mapForm.classList[activate ? 'remove' : 'add']('map__filters--disabled');
-  adForm.classList[activate ? 'remove' : 'add']('ad-form--disabled');
-  for (const mapFormField of mapFormFields){
-    mapFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
-  }
-  for (const adFormField of adFormFields) {
-    adFormField[activate ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
-  }
-};
-
-export { validateAdForm, activatePage };
+export { setAdFormSubmit };
