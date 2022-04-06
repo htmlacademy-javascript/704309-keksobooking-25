@@ -110,4 +110,8 @@ function renderSimpleMarkers (cards) {
   }
 }
 
-export { resetMarkersAndMapCoords };
+const closePopup = () => {
+  map.closePopup();
+};
+
+export { resetMarkersAndMapCoords, closePopup };

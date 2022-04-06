@@ -1,4 +1,5 @@
 import { resetMarkersAndMapCoords } from './map.js';
+import { closePopup } from './map.js';
 
 //функция для очистки формы, фильтров и возврата карты в первоначальное состояние
 const resetFormsAndMap = () => {
@@ -61,9 +62,7 @@ const resetFormsAndMap = () => {
   resetMarkersAndMapCoords();
 
   //закрытие открытого попапа с объявлением
-  const mapCanvasElement = document.querySelector('.map__canvas');
-  const openedBalloonElement = mapCanvasElement.querySelector('.leaflet-popup');
-  openedBalloonElement.classList.add('hidden');
+  closePopup();
 };
 
 //обработчик события нажатия на кнопку "очистить"
