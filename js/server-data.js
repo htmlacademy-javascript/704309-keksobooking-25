@@ -1,6 +1,6 @@
 //Получение данных с сервера (методом GET)
-const getServerData = (onSuccess, onError) => {
-  fetch('https://25.javascript.pages.academy/keksobooking/data')
+const getServerData = (onSuccess, onError, url) => {
+  fetch(url)
     .then((response) => {
       if (response.ok) {
         return response;

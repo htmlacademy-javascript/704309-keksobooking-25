@@ -1,4 +1,3 @@
-import { getServerData } from './server-data.js';
 import { isEscapeKey } from './utils.js';
 
 //модальное окно при ошибке запроса данных с сервера
@@ -21,10 +20,6 @@ const closeModalErrorMessageElement = modalErrorMessageElement.querySelector('.e
 closeModalErrorMessageElement.addEventListener('click', () => {
   modalErrorMessageElement.classList.add('hidden');
 });
-
-//ФУНКЦИЯ-ЗАГЛУШКА. (РАЗОБРАТЬСЯ КАК ОТ НЕЁ ИЗБАВИТЬСЯ!)
-const onSuccess = () => {};
-getServerData(onSuccess, openModalServerError);
 
 //функции открытия/закрытия модального окна для оповещения пользователя об УСПЕШНОЙ отправке данных из формы с объявлением
 const modalSuccessSendDataTemplate = document.querySelector('#success').content.querySelector('.success'); //получение разметки из шаблона
@@ -80,4 +75,4 @@ modalErrorSendDataElement.addEventListener('click', () => {
   closeModalErrorSendData();
 });
 
-export { openModalSuccessSendData, openModalErrorSendData };
+export { openModalSuccessSendData, openModalErrorSendData, openModalServerError };

@@ -1,5 +1,6 @@
 import { renderPopup } from './render-ads.js';
 import { getServerData } from './server-data.js';
+import { openModalServerError } from './modals.js';
 const START_COORDS = {
   lat: 35.6824,
   lng: 139.75219,
@@ -23,9 +24,11 @@ const activatePage = (activate = false) => {
 };
 
 //Создание карты
+const urlToGetData = 'https://25.javascript.pages.academy/keksobooking/data';
 const map = L.map('map-canvas')
   .on('load', () => {
     activatePage(true);
+    getServerData(renderSimpleMarkers, openModalServerError, urlToGetData);
   })
   .setView({
     lat: START_COORDS.lat,
@@ -89,7 +92,7 @@ const icon = L.icon({
 
 //Отображение обычных меткок на карте. Реализация показа всплывающего окна с подробной информацией
 //при нажатии нажатии на любую из обычных меток
-const renderSimpleMarkers = (cards) => {
+function renderSimpleMarkers (cards) {
   for (let i = 0; i < cards.length; i++) {
     const {lat, lng} = cards[i].location;
     const marker = L.marker({
@@ -105,8 +108,6 @@ const renderSimpleMarkers = (cards) => {
       .addTo(map)
       .bindPopup(renderPopup(cards[i]));
   }
-};
-
-getServerData(renderSimpleMarkers);
+}
 
 export { resetMarkersAndMapCoords };
