@@ -1,4 +1,5 @@
-import { resetFormsAndMap } from './form-reset.js';
+import { sendData } from './server-data.js';
+import { openModalSuccessSendData, openModalErrorSendData } from './modals.js';
 
 //Валидация с помощью библиотеки PristineJS
 const adForm = document.querySelector('.ad-form');
@@ -76,42 +77,21 @@ const unblockSubmitButton = () => {
   submitButton.textContent = 'Опубликовать';
 };
 
-//Проверка отправляемой формы на валидность. Обработка ответа при помощи "fetch"
-const setAdFormSubmit = (onSuccess, onFail) => {
-  adForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
+//Проверка отправляемой формы на валидность. Отправка формы на сервер. Обработка ответа при помощи "fetch"
+const urlForSendData = 'https://25.javascript.pages.academy/keksobooking';
+adForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  if (!pristine.validate()) {
+    return;
+  }
+  blockSubmitButton();
+  const formData = new FormData(evt.target);
+  sendData(openModalSuccessSendData, openModalErrorSendData, urlForSendData, formData);
+});
 
-    const isValid = pristine.validate();
-    if(isValid) {
-      blockSubmitButton();
-      const formData = new FormData(evt.target);
-
-      fetch(
-        'https://25.javascript.pages.academy/keksobooking',
-        {
-          method: 'POST',
-          body: formData,
-        },
-      )
-        .then((response) => {
-          if (response.ok) {
-            onSuccess();
-            unblockSubmitButton();
-            resetFormsAndMap();
-          } else {
-            onFail();
-            unblockSubmitButton();
-          }
-        })
-        .catch(() => {
-          // onFail();
-        });
-    }
-  });
-};
-
+//функция для сброса работы валидатора в момент нажатия кнопки "Очистить"
 const pristineReset = () => {
   pristine.reset();
 };
 
-export { setAdFormSubmit, pristineReset };
+export { pristineReset, unblockSubmitButton };

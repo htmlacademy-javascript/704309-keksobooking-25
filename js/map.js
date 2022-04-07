@@ -1,5 +1,5 @@
 import { renderPopup } from './render-ads.js';
-import { getServerData } from './server-data.js';
+import { getData } from './server-data.js';
 import { openModalServerError } from './modals.js';
 const START_COORDS = {
   lat: 35.6824,
@@ -29,7 +29,7 @@ const urlToGetData = 'https://25.javascript.pages.academy/keksobooking/data';
 const map = L.map('map-canvas')
   .on('load', () => {
     activatePage(true);
-    getServerData(renderSimpleMarkers, openModalServerError, urlToGetData);
+    getData(renderSimpleMarkers, openModalServerError, urlToGetData);
   })
   .setView({
     lat: START_COORDS.lat,
