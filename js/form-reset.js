@@ -1,5 +1,6 @@
 import { resetMarkersAndMapCoords, closePopup } from './map.js';
 import { pristineReset } from './form.js';
+import { resetSliderPosition } from './slider.js';
 
 //функция для очистки формы, фильтров и возврата карты в первоначальное состояние
 const resetFormsAndMap = () => {
@@ -21,6 +22,9 @@ const resetFormsAndMap = () => {
 
   //сброс сообщений валидатора Pristine.js
   pristineReset();
+
+  //перемещение положения ползунка слайдера в изначальное
+  resetSliderPosition();
 };
 
 //обработчик события нажатия на кнопку "очистить"

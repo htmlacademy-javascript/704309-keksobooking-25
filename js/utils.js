@@ -26,13 +26,5 @@ function getOfferType (type) {
 //Функция определения нажатия клавиши "Escape"
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const TYPE_OF_PLACEMENT = [
-  'palace',
-  'flat',
-  'house',
-  'bungalow',
-  'hotel',
-];
-
-export { getOfferType, isEscapeKey, TYPE_OF_PLACEMENT };
+export { getOfferType, isEscapeKey };
 
