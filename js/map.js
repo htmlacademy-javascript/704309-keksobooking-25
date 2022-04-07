@@ -5,6 +5,7 @@ const START_COORDS = {
   lat: 35.6824,
   lng: 139.75219,
 };
+const MAP_ZOOM = 13;
 
 //Изменение состояния страницы (Активное/Неактивное)
 const activatePage = (activate = false) => {
@@ -33,7 +34,7 @@ const map = L.map('map-canvas')
   .setView({
     lat: START_COORDS.lat,
     lng: START_COORDS.lng,
-  }, 13);
+  }, MAP_ZOOM);
 
 //Создание слоя с изображениями карт
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -80,7 +81,7 @@ const resetMarkersAndMapCoords = () => {
   map.setView({
     lat: START_COORDS.lat,
     lng: START_COORDS.lng,
-  }, 13);
+  }, MAP_ZOOM);
 };
 
 //Замена изображения штатной иконки для обычной метки

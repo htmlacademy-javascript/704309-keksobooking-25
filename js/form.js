@@ -132,4 +132,8 @@ const setAdFormSubmit = (onSuccess, onFail) => {
   });
 };
 
-export { setAdFormSubmit };
+const pristineReset = () => {
+  pristine.reset();
+};
+
+export { setAdFormSubmit, pristineReset };
