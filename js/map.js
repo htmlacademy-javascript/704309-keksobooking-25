@@ -90,6 +90,9 @@ const icon = L.icon({
   iconAnchor: [20, 40],
 });
 
+//Создание слоя для отрисовки на нём обычных меток
+const markerGroup = L.layerGroup().addTo(map);
+
 //Отображение обычных меткок на карте. Реализация показа всплывающего окна с подробной информацией
 //при нажатии нажатии на любую из обычных меток
 const renderSimpleMarkers = (cards) => {
@@ -105,10 +108,14 @@ const renderSimpleMarkers = (cards) => {
     );
 
     marker
-      .addTo(map)
+      .addTo(markerGroup)
       .bindPopup(renderPopup(cards[i]));
   }
   activatePage(true);
+};
+
+const deleteMarkerGroupLayer = () => {
+  markerGroup.clearLayers();
 };
 
 const closePopup = () => {
@@ -203,6 +210,7 @@ function getFilteredData (rowData) {
   mapForm.addEventListener('change', (evt) => {
     closePopup();                 //закрытие открытого попапа
     resetMarkersAndMapCoords();   //возвращение карты к начальным координатам
+    deleteMarkerGroupLayer();     //удаление текущего слоя с метками
     if (!(evt.target.nodeName === 'SELECT' || evt.target.nodeName === 'INPUT')) {
       return null;
     }
