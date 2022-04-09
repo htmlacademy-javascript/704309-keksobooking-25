@@ -1,4 +1,5 @@
 import { isEscapeKey } from './utils.js';
+import { activatePage } from './map.js';
 
 //модальное окно при ошибке запроса данных с сервера
 const modalErrorMessageTemplate = document.querySelector('#error--server').content.querySelector('.error'); //получение разметки из шаблона
@@ -13,6 +14,7 @@ bodyElement.appendChild(modalErrorMessageElement);
 const openModalServerError = (error) => {
   modalErrorMessageElement.classList.remove('hidden');
   modalErrorMessageElement.querySelector('.error__message--text').textContent = error.message;
+  activatePage(false);
 };
 
 //обработчик клика для закрытия модального окна с ошибкой сервера
