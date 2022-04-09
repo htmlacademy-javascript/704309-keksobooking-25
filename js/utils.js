@@ -26,5 +26,14 @@ function getOfferType (type) {
 //Функция определения нажатия клавиши "Escape"
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export { getOfferType, isEscapeKey };
+//функция для устранения "дребезга" (например при частом изменении параметров фильтра)
+//взята отсюда: https://www.freecodecamp.org/news/javascript-debounce-example. Доработана Академией.
+const debounce = (callback, timeoutDelay) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
 
+export { getOfferType, isEscapeKey, debounce };

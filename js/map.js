@@ -1,6 +1,8 @@
 import { renderPopup } from './render-ads.js';
 import { getData } from './server-data.js';
 import { openModalServerError } from './modals.js';
+import { debounce } from './utils.js';
+
 const START_COORDS = {
   lat: 35.6824,
   lng: 139.75219,
@@ -203,28 +205,31 @@ function checkFeatures (rowDataFeatures) {
     return true;
   }
 }
+const MAX_ADS_AMOUNT = 10;
+const RERENDER_DELAY = 500;
+const applyFilter = (evt, rowData) => {
+  closePopup();                 //закрытие открытого попапа
+  resetMarkersAndMapCoords();   //возвращение карты к начальным координатам
+  deleteMarkerGroupLayer();     //удаление текущего слоя с метками
+  if (!(evt.target.nodeName === 'SELECT' || evt.target.nodeName === 'INPUT')) {
+    return null;
+  }
+  const resultArray = [];
+  for (let i = 0; i < rowData.length; i++) {
+    if (checkType(rowData[i]) && checkPrice(rowData[i]) && checkRooms(rowData[i]) && checkGuests(rowData[i]) && checkFeatures(rowData[i])) {
+      if (resultArray.length === MAX_ADS_AMOUNT) {
+        break;
+      }
+      resultArray.push(rowData[i]);
+    }
+  }
+  renderSimpleMarkers(resultArray);
+};
+
 function getFilteredData (rowData) {
-  const MAX_ADS_AMOUNT = 10;
   renderSimpleMarkers(rowData.slice(0,MAX_ADS_AMOUNT)); //получение и отрисовка первых 10 объявлений при загрузке страницы
   const mapForm = document.querySelector('.map__filters');
-  mapForm.addEventListener('change', (evt) => {
-    closePopup();                 //закрытие открытого попапа
-    resetMarkersAndMapCoords();   //возвращение карты к начальным координатам
-    deleteMarkerGroupLayer();     //удаление текущего слоя с метками
-    if (!(evt.target.nodeName === 'SELECT' || evt.target.nodeName === 'INPUT')) {
-      return null;
-    }
-    const resultArray = [];
-    for (let i = 0; i < rowData.length; i++) {
-      if (checkType(rowData[i]) && checkPrice(rowData[i]) && checkRooms(rowData[i]) && checkGuests(rowData[i]) && checkFeatures(rowData[i])) {
-        if (resultArray.length === MAX_ADS_AMOUNT) {
-          break;
-        }
-        resultArray.push(rowData[i]);
-      }
-    }
-    renderSimpleMarkers(resultArray);
-  });
+  mapForm.addEventListener('change', debounce((evt) => applyFilter(evt, rowData), RERENDER_DELAY));
 }
 
 export { resetMarkersAndMapCoords, closePopup, activatePage };
