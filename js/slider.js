@@ -28,3 +28,32 @@ sliderElement.noUiSlider.on('update', () => {
 priceFieldElement.addEventListener('change', () => {
   sliderElement.noUiSlider.set(priceFieldElement.value);
 });
+
+//Данные для функции получения минимального значения value и placeholder для поля price
+const MinPriceForType = {
+  BUNGALOW: '0',
+  FLAT: '1000',
+  HOTEL: '3000',
+  HOUSE: '5000',
+  PALACE: '10000'
+};
+
+//Функция для получения минимального значения value и placeholder для поля price
+const typeFieldElement = document.querySelector('#type');
+const getMinPrice = () => Number(MinPriceForType[typeFieldElement.value.toUpperCase()]);
+typeFieldElement.addEventListener('change', () => {
+  const minPriceValue = getMinPrice();
+  sliderElement.noUiSlider.updateOptions({
+    start: minPriceValue,
+  });
+  priceFieldElement.value = minPriceValue;
+  priceFieldElement.placeholder = minPriceValue;
+});
+
+const resetSliderPosition = () => {
+  sliderElement.noUiSlider.updateOptions({
+    start: 1000,
+  });
+};
+
+export { resetSliderPosition };

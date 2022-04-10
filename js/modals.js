@@ -1,5 +1,5 @@
-import { getServerData } from './server-data.js';
 import { isEscapeKey } from './utils.js';
+import { activatePage } from './map.js';
 
 //модальное окно при ошибке запроса данных с сервера
 const modalErrorMessageTemplate = document.querySelector('#error--server').content.querySelector('.error'); //получение разметки из шаблона
@@ -14,6 +14,7 @@ bodyElement.appendChild(modalErrorMessageElement);
 const openModalServerError = (error) => {
   modalErrorMessageElement.classList.remove('hidden');
   modalErrorMessageElement.querySelector('.error__message--text').textContent = error.message;
+  activatePage(false);
 };
 
 //обработчик клика для закрытия модального окна с ошибкой сервера
@@ -21,10 +22,6 @@ const closeModalErrorMessageElement = modalErrorMessageElement.querySelector('.e
 closeModalErrorMessageElement.addEventListener('click', () => {
   modalErrorMessageElement.classList.add('hidden');
 });
-
-//ФУНКЦИЯ-ЗАГЛУШКА. (РАЗОБРАТЬСЯ КАК ОТ НЕЁ ИЗБАВИТЬСЯ!)
-const onSuccess = () => {};
-getServerData(onSuccess, openModalServerError);
 
 //функции открытия/закрытия модального окна для оповещения пользователя об УСПЕШНОЙ отправке данных из формы с объявлением
 const modalSuccessSendDataTemplate = document.querySelector('#success').content.querySelector('.success'); //получение разметки из шаблона
@@ -80,4 +77,4 @@ modalErrorSendDataElement.addEventListener('click', () => {
   closeModalErrorSendData();
 });
 
-export { openModalSuccessSendData, openModalErrorSendData };
+export { openModalSuccessSendData, openModalErrorSendData, openModalServerError };
