@@ -1,4 +1,4 @@
-import { resetMarkersAndMapCoords, closePopup } from './map.js';
+import { resetMarkersAndMapCoords, closePopup, renderSimpleMarkers } from './map.js';
 import { pristineReset } from './form.js';
 import { resetSliderPosition } from './slider.js';
 
@@ -25,6 +25,9 @@ const resetFormsAndMap = () => {
 
   //перемещение положения ползунка слайдера в изначальное
   resetSliderPosition();
+
+  //получение и отрисовка маркеров аналогично моменту загрузки карты
+  renderSimpleMarkers();
 };
 
 //обработчик события нажатия на кнопку "очистить"

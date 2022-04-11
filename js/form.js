@@ -1,5 +1,6 @@
 import { sendData } from './server-data.js';
 import { openModalSuccessSendData, openModalErrorSendData } from './modals.js';
+import { resetFormsAndMap } from './form-reset.js';
 
 //Валидация с помощью библиотеки PristineJS
 const adForm = document.querySelector('.ad-form');
@@ -77,6 +78,17 @@ const unblockSubmitButton = () => {
   submitButton.textContent = 'Опубликовать';
 };
 
+const onSuccessSentDataActions = () => {
+  openModalSuccessSendData();
+  unblockSubmitButton();
+  resetFormsAndMap();
+};
+
+const onErrorSentDataActions = () => {
+  openModalErrorSendData();
+  unblockSubmitButton();
+};
+
 //Проверка отправляемой формы на валидность. Отправка формы на сервер. Обработка ответа при помощи "fetch"
 const urlForSendData = 'https://25.javascript.pages.academy/keksobooking';
 adForm.addEventListener('submit', (evt) => {
@@ -86,7 +98,7 @@ adForm.addEventListener('submit', (evt) => {
   }
   blockSubmitButton();
   const formData = new FormData(evt.target);
-  sendData(openModalSuccessSendData, openModalErrorSendData, urlForSendData, formData);
+  sendData(onSuccessSentDataActions, onErrorSentDataActions, urlForSendData, formData);
 });
 
 //функция для сброса работы валидатора в момент нажатия кнопки "Очистить"
@@ -94,4 +106,4 @@ const pristineReset = () => {
   pristine.reset();
 };
 
-export { pristineReset, unblockSubmitButton };
+export { pristineReset };
