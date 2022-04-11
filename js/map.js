@@ -3,6 +3,8 @@ import { getData } from './server-data.js';
 import { openModalServerError } from './modals.js';
 import { debounce } from './utils.js';
 
+const MAX_ADS_AMOUNT = 10;
+const savedTenRowDataElements = [];
 const START_COORDS = {
   lat: 35.6824,
   lng: 139.75219,
@@ -95,9 +97,14 @@ const icon = L.icon({
 //Создание слоя для отрисовки на нём обычных меток
 const markerGroup = L.layerGroup().addTo(map);
 
+const deleteMarkerGroupLayer = () => {
+  markerGroup.clearLayers();
+};
+
 //Отображение обычных меткок на карте. Реализация показа всплывающего окна с подробной информацией
 //при нажатии нажатии на любую из обычных меток
-const renderSimpleMarkers = (cards) => {
+const renderSimpleMarkers = (cards = savedTenRowDataElements) => {
+  deleteMarkerGroupLayer();
   for (let i = 0; i < cards.length; i++) {
     const {lat, lng} = cards[i].location;
     const marker = L.marker({
@@ -114,10 +121,6 @@ const renderSimpleMarkers = (cards) => {
       .bindPopup(renderPopup(cards[i]));
   }
   activatePage(true);
-};
-
-const deleteMarkerGroupLayer = () => {
-  markerGroup.clearLayers();
 };
 
 const closePopup = () => {
@@ -205,7 +208,6 @@ function checkFeatures (rowDataFeatures) {
     return true;
   }
 }
-const MAX_ADS_AMOUNT = 10;
 const RERENDER_DELAY = 500;
 const applyFilter = (evt, rowData) => {
   closePopup();                 //закрытие открытого попапа
@@ -227,9 +229,15 @@ const applyFilter = (evt, rowData) => {
 };
 
 function getFilteredData (rowData) {
-  renderSimpleMarkers(rowData.slice(0,MAX_ADS_AMOUNT)); //получение и отрисовка первых 10 объявлений при загрузке страницы
+  for (const element of rowData) {
+    savedTenRowDataElements.push(element);
+    if (savedTenRowDataElements.length === MAX_ADS_AMOUNT) {
+      break;
+    }
+  }
+  renderSimpleMarkers(savedTenRowDataElements); //получение и отрисовка первых 10 объявлений при загрузке страницы
   const mapForm = document.querySelector('.map__filters');
   mapForm.addEventListener('change', debounce((evt) => applyFilter(evt, rowData), RERENDER_DELAY));
 }
 
-export { resetMarkersAndMapCoords, closePopup, activatePage };
+export { resetMarkersAndMapCoords, closePopup, activatePage, renderSimpleMarkers };
