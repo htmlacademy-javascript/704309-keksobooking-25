@@ -1,5 +1,3 @@
-import { resetFormsAndMap } from './form-reset.js';
-import { unblockSubmitButton } from './form.js';
 //Получение данных с сервера (методом GET)
 const getData = (onSuccess, onError, url) => {
   fetch(url)
@@ -29,12 +27,9 @@ const sendData = (onSuccess, onError, url, body) => {
     .then((response) => {
       if (response.ok) {
         onSuccess();
-        unblockSubmitButton();
-        resetFormsAndMap();
         return;
       }
       onError();
-      unblockSubmitButton();
     })
     .catch(() => {
       onError();

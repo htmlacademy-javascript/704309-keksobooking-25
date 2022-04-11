@@ -1,5 +1,5 @@
 //Функция для определения типа жилья
-function getOfferType (type) {
+const getOfferType = (type) => {
   const BuildingType = {
     FLAT: 'flat',
     BUNGALOW: 'bungalow',
@@ -22,7 +22,7 @@ function getOfferType (type) {
     default:
       throw Error('Incorrect type');
   }
-}
+};
 //Функция определения нажатия клавиши "Escape"
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
