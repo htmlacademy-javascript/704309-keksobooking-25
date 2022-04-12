@@ -7,7 +7,7 @@ const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const roomNumberField = adForm.querySelector('[name="rooms"]');
 const capacityOfGuestsField = adForm.querySelector('[name="capacity"]');
-const amountOfGuestsOption = {
+const AmountOfGuestsOption = {
   '1': ['1'],
   '2': ['2', '1'],
   '3': ['3', '2', '1'],
@@ -38,7 +38,7 @@ pristine.addValidator(adForm.querySelector('#title'), validateTitleLength, getTi
 
 //"Синхронизация" полей "Количество комнат" (room_number) и "Количество мест" (capacity)
 //Функция валидации поля capacity
-const validateCapacityOfGuests = () => amountOfGuestsOption[roomNumberField.value].includes(capacityOfGuestsField.value);
+const validateCapacityOfGuests = () => AmountOfGuestsOption[roomNumberField.value].includes(capacityOfGuestsField.value);
 //Функция вывода сообщения об ошибке для поля capacity
 const getCapacityOfGuestsErrorMessage = () => 'Недопустимое значение';
 pristine.addValidator(capacityOfGuestsField, validateCapacityOfGuests, getCapacityOfGuestsErrorMessage);
