@@ -16,6 +16,7 @@ const getData = (onSuccess, onError, url) => {
     });
 };
 
+//Отправка данных на сервер (методом POST)
 const sendData = (onSuccess, onError, url, body) => {
   fetch(
     url,
