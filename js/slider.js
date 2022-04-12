@@ -1,8 +1,17 @@
 //Реализация слайдера при помощи noUiSlider
 const sliderElement = document.querySelector('.ad-form__slider');
 const priceFieldElement = document.querySelector('#price');
+const typeFieldElement = document.querySelector('#type');
 const MIN_PRICE = 0;
 const MAX_PRICE = 100000;
+//Данные для функции получения минимального значения value и placeholder для поля price
+const MinPriceForType = {
+  BUNGALOW: '0',
+  FLAT: '1000',
+  HOTEL: '3000',
+  HOUSE: '5000',
+  PALACE: '10000'
+};
 
 //Создание слайдера с первоначальными настройками
 noUiSlider.create(sliderElement, {
@@ -29,17 +38,7 @@ priceFieldElement.addEventListener('change', () => {
   sliderElement.noUiSlider.set(priceFieldElement.value);
 });
 
-//Данные для функции получения минимального значения value и placeholder для поля price
-const MinPriceForType = {
-  BUNGALOW: '0',
-  FLAT: '1000',
-  HOTEL: '3000',
-  HOUSE: '5000',
-  PALACE: '10000'
-};
-
 //Функция для получения минимального значения value и placeholder для поля price
-const typeFieldElement = document.querySelector('#type');
 const getMinPrice = () => Number(MinPriceForType[typeFieldElement.value.toUpperCase()]);
 typeFieldElement.addEventListener('change', () => {
   const minPriceValue = getMinPrice();
@@ -50,6 +49,7 @@ typeFieldElement.addEventListener('change', () => {
   priceFieldElement.placeholder = minPriceValue;
 });
 
+//Функция для сброса позиции ползунка слайдера в первоначальное
 const resetSliderPosition = () => {
   sliderElement.noUiSlider.updateOptions({
     start: 1000,

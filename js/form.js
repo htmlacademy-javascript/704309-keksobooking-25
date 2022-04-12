@@ -2,9 +2,25 @@ import { sendData } from './server-data.js';
 import { openModalSuccessSendData, openModalErrorSendData } from './modals.js';
 import { resetFormsAndMap } from './form-reset.js';
 
-//Валидация с помощью библиотеки PristineJS
 const adForm = document.querySelector('.ad-form');
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
+const roomNumberField = adForm.querySelector('[name="rooms"]');
+const capacityOfGuestsField = adForm.querySelector('[name="capacity"]');
+const amountOfGuestsOption = {
+  '1': ['1'],
+  '2': ['2', '1'],
+  '3': ['3', '2', '1'],
+  '100': ['0']
+};
+const priceField = adForm.querySelector('#price');
+const MAX_PRICE_VALUE = 100000;
+const timeIn = adForm.querySelector('#timein');
+const timeOut = adForm.querySelector('#timeout');
+const submitButton = adForm.querySelector('.ad-form__submit');
+const urlForSendData = 'https://25.javascript.pages.academy/keksobooking';
 
+//Валидация с помощью библиотеки PristineJS
 const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
   errorClass: 'ad-form__element--invalid',
@@ -14,34 +30,22 @@ const pristine = new Pristine(adForm, {
   errorTextClass: 'ad-form__error'
 });
 
-//Валидация поля title на количество введённых символов
-const validateTitleLength = (value) => {
-  const MIN_TITLE_LENGTH = 30;
-  const MAX_TITLE_LENGTH = 100;
-  return value.length >= MIN_TITLE_LENGTH && value.length <= MAX_TITLE_LENGTH;
-};
-pristine.addValidator(adForm.querySelector('#title'), validateTitleLength, 'От 30 до 100 символов');
+//Функция валидации поля title на количество введённых символов
+const validateTitleLength = (value) => value.length >= MIN_TITLE_LENGTH && value.length <= MAX_TITLE_LENGTH;
+//Функция вывода сообщения об ошибке для поля title
+const getTitleLengthErrorMessage = () => 'От 30 до 100 символов';
+pristine.addValidator(adForm.querySelector('#title'), validateTitleLength, getTitleLengthErrorMessage);
 
 //"Синхронизация" полей "Количество комнат" (room_number) и "Количество мест" (capacity)
-const roomNumberField = adForm.querySelector('[name="rooms"]');
-const capacityOfGuestsField = adForm.querySelector('[name="capacity"]');
-const amountOfGuestsOption = {
-  '1': ['1'],
-  '2': ['2', '1'],
-  '3': ['3', '2', '1'],
-  '100': ['0']
-};
 //Функция валидации поля capacity
 const validateCapacityOfGuests = () => amountOfGuestsOption[roomNumberField.value].includes(capacityOfGuestsField.value);
-//Функция вывода сообщения об ошибке
+//Функция вывода сообщения об ошибке для поля capacity
 const getCapacityOfGuestsErrorMessage = () => 'Недопустимое значение';
 pristine.addValidator(capacityOfGuestsField, validateCapacityOfGuests, getCapacityOfGuestsErrorMessage);
 
-//Валидация поля price на максимальное и минимальное значения
-const priceField = adForm.querySelector('#price');
-const MAX_PRICE_VALUE = 100000;
+//Функция валидации поля price на максимальное и минимальное значения
 const validatePriceField = (value) => !(parseInt(value, 10) > MAX_PRICE_VALUE || parseInt(priceField.placeholder, 10) > parseInt(value, 10));
-
+//Функция вывода сообщения об ошибке для поля price
 const getPriceFieldErrorMessage = () => {
   if (parseInt(priceField.placeholder, 10) > parseInt(priceField.value, 10)) {
     return `Минимальная цена ${priceField.placeholder}`;
@@ -51,10 +55,7 @@ const getPriceFieldErrorMessage = () => {
 };
 pristine.addValidator(priceField, validatePriceField, getPriceFieldErrorMessage);
 
-//"Синхронизация" полей timein и timeout
-const timeIn = adForm.querySelector('#timein');
-const timeOut = adForm.querySelector('#timeout');
-
+//Функция для "Синхронизации" полей timein и timeout
 const onTimeChange = (evt) => {
   timeIn.value = evt.target.value;
   timeOut.value = evt.target.value;
@@ -63,7 +64,6 @@ timeIn.addEventListener('change', onTimeChange);
 timeOut.addEventListener('change', onTimeChange);
 
 //Функции для блокировки/разблокировки кнопки "Опубликовать"
-const submitButton = adForm.querySelector('.ad-form__submit');
 const blockSubmitButton = () => {
   submitButton.disabled = true;
   submitButton.style.backgroundColor = '#ccc';
@@ -90,7 +90,6 @@ const onErrorSentDataActions = () => {
 };
 
 //Проверка отправляемой формы на валидность. Отправка формы на сервер. Обработка ответа при помощи "fetch"
-const urlForSendData = 'https://25.javascript.pages.academy/keksobooking';
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   if (!pristine.validate()) {
@@ -101,9 +100,9 @@ adForm.addEventListener('submit', (evt) => {
   sendData(onSuccessSentDataActions, onErrorSentDataActions, urlForSendData, formData);
 });
 
-//функция для сброса работы валидатора в момент нажатия кнопки "Очистить"
-const pristineReset = () => {
+//Функция для сброса работы валидатора Pristine в момент нажатия кнопки "Очистить"
+const resetPristine = () => {
   pristine.reset();
 };
 
-export { pristineReset };
+export { resetPristine };

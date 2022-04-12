@@ -1,4 +1,4 @@
-//Функция для определения типа жилья
+//функция для определения типа жилья
 const getOfferType = (type) => {
   const BuildingType = {
     FLAT: 'flat',
@@ -23,11 +23,12 @@ const getOfferType = (type) => {
       throw Error('Incorrect type');
   }
 };
-//Функция определения нажатия клавиши "Escape"
+
+//функция определения нажатия клавиши "Escape"
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 //функция для устранения "дребезга" (например при частом изменении параметров фильтра)
-//взята отсюда: https://www.freecodecamp.org/news/javascript-debounce-example. Доработана Академией.
+//взята с сайта: https://www.freecodecamp.org/news/javascript-debounce-example. Доработана Академией.
 const debounce = (callback, timeoutDelay) => {
   let timeoutId;
   return (...rest) => {

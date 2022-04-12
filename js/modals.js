@@ -5,7 +5,7 @@ import { activatePage } from './map.js';
 const modalErrorMessageTemplate = document.querySelector('#error--server').content.querySelector('.error'); //получение разметки из шаблона
 const bodyElement = document.querySelector('body'); //элемент для отрисовки модального окна. (перед закрывающимся элементом <body>)
 
-const modalErrorMessageElement = modalErrorMessageTemplate.cloneNode(true);
+const modalErrorMessageElement = modalErrorMessageTemplate.cloneNode(true); //клонирование разметки модального окна при ошибке запроса данных
 const ERROR_MESSAGE = 'Ошибка запроса данных с сервера:';
 modalErrorMessageElement.querySelector('.error__message').textContent = ERROR_MESSAGE;
 modalErrorMessageElement.classList.add('hidden');
@@ -33,7 +33,7 @@ const onModalEscKeydown = (evt) => {
   }
 };
 
-const modalSuccessSendDataElement = modalSuccessSendDataTemplate.cloneNode(true);
+const modalSuccessSendDataElement = modalSuccessSendDataTemplate.cloneNode(true); //клонирование разметки модального окна при успешной отправке данных
 modalSuccessSendDataElement.classList.add('hidden');
 bodyElement.appendChild(modalSuccessSendDataElement);
 
@@ -54,7 +54,7 @@ modalSuccessSendDataElement.addEventListener('click', () => {
 //функция открытия/закрытия модального окна для оповещения пользователя о НЕУСПЕШНОЙ отправке данных из формы с объявлением
 const modalErrorSendDataTemplate = document.querySelector('#error').content.querySelector('.error'); //получение разметки из шаблона
 
-const modalErrorSendDataElement = modalErrorSendDataTemplate.cloneNode(true);
+const modalErrorSendDataElement = modalErrorSendDataTemplate.cloneNode(true); //клонирование разметки модального окна при ошибке отправки данных
 const modalErrorRetryButtonElement = modalErrorSendDataElement.querySelector('.error__button'); //кнопка для повторной отправки объявления
 modalErrorSendDataElement.classList.add('hidden');
 bodyElement.appendChild(modalErrorSendDataElement);

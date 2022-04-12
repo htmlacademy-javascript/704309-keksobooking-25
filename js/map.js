@@ -10,14 +10,36 @@ const START_COORDS = {
   lng: 139.75219,
 };
 const MAP_ZOOM = 13;
+const adForm = document.querySelector('.ad-form');
+const mapForm = document.querySelector('.map__filters');
+const mapFormFields = mapForm.children;
+const adFormFields = adForm.children;
+const urlToGetData = 'https://25.javascript.pages.academy/keksobooking/data';
+const MAIN_PIN_ICON_SIZE = [52, 52];
+const MAIN_PIN_ICON_SETTINGS = [26, 52];
+const PIN_ICON_SIZE = [40, 40];
+const PIN_ICON_SETTINGS = [20, 40];
+const addressFieldElement = document.querySelector('#address');
+const defaultValue = 'any';
+const housingTypeElement = document.querySelector('#housing-type');
+const housingPriceElement = document.querySelector('#housing-price');
+const housingRoomsElement = document.querySelector('#housing-rooms');
+const housingGuestsElement = document.querySelector('#housing-guests');
+const defaultCheckedValue = false;
+const checkboxFilterWifiElement = document.querySelector('#filter-wifi');
+const checkboxFilterDishwasherElement = document.querySelector('#filter-dishwasher');
+const checkboxFilteParkingElement = document.querySelector('#filter-parking');
+const checkboxFilterWasherElement = document.querySelector('#filter-washer');
+const checkboxFilterElevatorElement = document.querySelector('#filter-elevator');
+const checkboxFilterConditionerElement = document.querySelector('#filter-conditioner');
+const arrayFilterElements = [checkboxFilterWifiElement, checkboxFilterDishwasherElement, checkboxFilteParkingElement, checkboxFilterWasherElement, checkboxFilterElevatorElement, checkboxFilterConditionerElement];
+const BEFORE_MIDDLE_PRICE = 10000;
+const AFTER_MIDDLE_PRICE = 50000;
+const RERENDER_DELAY = 500;
+const arrayCheckedFilterElements = [];
 
 //Изменение состояния страницы (Активное/Неактивное)
 const activatePage = (activate = false) => {
-  const adForm = document.querySelector('.ad-form');
-  const mapForm = document.querySelector('.map__filters');
-  const mapFormFields = mapForm.children;
-  const adFormFields = adForm.children;
-
   mapForm.classList[activate ? 'remove' : 'add']('map__filters--disabled');
   adForm.classList[activate ? 'remove' : 'add']('ad-form--disabled');
   for (const mapFormField of mapFormFields){
@@ -29,7 +51,6 @@ const activatePage = (activate = false) => {
 };
 
 //Создание карты
-const urlToGetData = 'https://25.javascript.pages.academy/keksobooking/data';
 const map = L.map('map-canvas')
   .on('load', () => {
     getData(getFilteredData, openModalServerError, urlToGetData);
@@ -49,8 +70,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 //Замена изображения штатной иконки для главной метки
 const mainPinIcon = L.icon({
   iconUrl: './img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  iconSize: MAIN_PIN_ICON_SIZE,
+  iconAnchor: MAIN_PIN_ICON_SETTINGS,
 });
 
 //Создание главного маркера
@@ -65,10 +86,10 @@ const mainMarker = L.marker(
   }
 );
 
+//Добавление главного маркера на карту
 mainMarker.addTo(map);
 
 //Запись координат главной метки в поле address
-const addressFieldElement = document.querySelector('#address');
 mainMarker.on('moveend', (evt) => {
   const mainMarkerСoordinates = evt.target.getLatLng();
   addressFieldElement.value = `${(mainMarkerСoordinates.lat).toFixed(5)}, ${(mainMarkerСoordinates.lng).toFixed(5)}`;
@@ -90,18 +111,19 @@ const resetMarkersAndMapCoords = () => {
 //Замена изображения штатной иконки для обычной метки
 const icon = L.icon({
   iconUrl: '../img/pin.svg',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
+  iconSize: PIN_ICON_SIZE,
+  iconAnchor: PIN_ICON_SETTINGS,
 });
 
 //Создание слоя для отрисовки на нём обычных меток
 const markerGroup = L.layerGroup().addTo(map);
 
+//Функция для очистки слоя со всеми штатными метками
 const deleteMarkerGroupLayer = () => {
   markerGroup.clearLayers();
 };
 
-//Отображение обычных меткок на карте. Реализация показа всплывающего окна с подробной информацией
+//Функция для оторисовки обычных меткок на карте. Реализация показа всплывающего окна с подробной информацией
 //при нажатии нажатии на любую из обычных меток
 const renderSimpleMarkers = (cards = savedTenRowDataElements) => {
   deleteMarkerGroupLayer();
@@ -123,36 +145,32 @@ const renderSimpleMarkers = (cards = savedTenRowDataElements) => {
   activatePage(true);
 };
 
+//Функция для закрытия открытого попапа с информацией об объявлении
 const closePopup = () => {
   map.closePopup();
 };
 
-//реализация фильтрации всех select и checkbox
-const defaultValue = 'any';
-const housingTypeElement = document.querySelector('#housing-type');
-const housingPriceElement = document.querySelector('#housing-price');
-const housingRoomsElement = document.querySelector('#housing-rooms');
-const housingGuestsElement = document.querySelector('#housing-guests');
+//Реализация фильтрации всех select и checkbox
 housingPriceElement.value = housingTypeElement.value = housingRoomsElement.value = housingGuestsElement.value = defaultValue;
 
-//функция для проверки селекта "housing-type"
+//Функция для проверки селекта "housing-type"
 const checkType = (rowDataType) => {
   if (housingTypeElement.value === rowDataType.offer.type || housingTypeElement.value === defaultValue) {
     return true;
   }
 };
 
-//функция для проверки селекта "housing-price"
+//Функция для проверки селекта "housing-price"
 const checkPrice = (rowDataPrice) => {
   if ((housingPriceElement.value === defaultValue) ||
-    (housingPriceElement.value === 'low' && rowDataPrice.offer.price <= 10000) ||
-    (housingPriceElement.value === 'middle' && rowDataPrice.offer.price > 10000 && rowDataPrice.offer.price <= 50000) ||
-    (housingPriceElement.value === 'high' && rowDataPrice.offer.price > 50000)) {
+    (housingPriceElement.value === 'low' && rowDataPrice.offer.price <= BEFORE_MIDDLE_PRICE) ||
+    (housingPriceElement.value === 'middle' && rowDataPrice.offer.price > BEFORE_MIDDLE_PRICE && rowDataPrice.offer.price <= AFTER_MIDDLE_PRICE) ||
+    (housingPriceElement.value === 'high' && rowDataPrice.offer.price > AFTER_MIDDLE_PRICE)) {
     return true;
   }
 };
 
-//функция для проверки селекта "housing-rooms"
+//Функция для проверки селекта "housing-rooms"
 const checkRooms = (rowDataRooms) => {
   if (housingRoomsElement.value === defaultValue ||
     (housingRoomsElement.value === '1' && housingRoomsElement.value === String(rowDataRooms.offer.rooms)) ||
@@ -163,7 +181,7 @@ const checkRooms = (rowDataRooms) => {
   }
 };
 
-//функция для проверки селекта "housing-guests"
+//Функция для проверки селекта "housing-guests"
 const checkGuests = (rowDataGuests) => {
   if (housingGuestsElement.value === defaultValue ||
     (housingGuestsElement.value === '3' && housingGuestsElement.value === String(rowDataGuests.offer.guests)) ||
@@ -174,16 +192,8 @@ const checkGuests = (rowDataGuests) => {
   }
 };
 
-//функция для проверки чекбоксов "housing-features"
-const defaultCheckedValue = false;
-const checkboxFilterWifiElement = document.querySelector('#filter-wifi');
-const checkboxFilterDishwasherElement = document.querySelector('#filter-dishwasher');
-const checkboxFilteParkingElement = document.querySelector('#filter-parking');
-const checkboxFilterWasherElement = document.querySelector('#filter-washer');
-const checkboxFilterElevatorElement = document.querySelector('#filter-elevator');
-const checkboxFilterConditionerElement = document.querySelector('#filter-conditioner');
-const arrayFilterElements = [checkboxFilterWifiElement, checkboxFilterDishwasherElement, checkboxFilteParkingElement, checkboxFilterWasherElement, checkboxFilterElevatorElement, checkboxFilterConditionerElement];
-function checkFeatures (rowDataFeatures) {
+//Функция для проверки чекбоксов "housing-features"
+const checkFeatures = (rowDataFeatures) => {
   if (rowDataFeatures.offer.features === undefined) {
     // избавляемся от ошибки в те моменты, когда у предложения вообще отсутствуют преимущества (features)
     rowDataFeatures.offer.features = [];
@@ -192,7 +202,6 @@ function checkFeatures (rowDataFeatures) {
     checkboxFilterWasherElement.checked || checkboxFilterElevatorElement.checked || checkboxFilterConditionerElement.checked) === defaultCheckedValue) {
     return true;
   }
-  const arrayCheckedFilterElements = [];
   for (let i = 0; i < arrayFilterElements.length; i++) {
     if (arrayFilterElements[i].checked === true) {
       arrayCheckedFilterElements.push(arrayFilterElements[i].value);
@@ -207,8 +216,10 @@ function checkFeatures (rowDataFeatures) {
   if (arrayAmountEqualElements.length === arrayCheckedFilterElements.length) {
     return true;
   }
-}
-const RERENDER_DELAY = 500;
+};
+
+//Функция отвечающая за фильтрацию объявлений при изменении значений select и checkbox формы ".map__filters"
+
 const applyFilter = (evt, rowData) => {
   closePopup();                 //закрытие открытого попапа
   resetMarkersAndMapCoords();   //возвращение карты к начальным координатам
@@ -236,7 +247,6 @@ function getFilteredData (rowData) {
     }
   }
   renderSimpleMarkers(savedTenRowDataElements); //получение и отрисовка первых 10 объявлений при загрузке страницы
-  const mapForm = document.querySelector('.map__filters');
   mapForm.addEventListener('change', debounce((evt) => applyFilter(evt, rowData), RERENDER_DELAY));
 }
 
